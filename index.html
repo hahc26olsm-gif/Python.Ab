@@ -4,16 +4,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AB Calculator | Neon Edition</title>
+<meta name="theme-color" content="#080817">
+<title>AB Calculator | Ultimate Edition</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Inter:wght@400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800&display=swap');
 
 :root {
+    --bg: #070714;
+    --panel: rgba(255,255,255,.055);
+    --glass: rgba(255,255,255,.075);
+    --border: rgba(255,255,255,.12);
+    --text: #f7f7ff;
+    --muted: #9292b4;
     --cyan: #00f5ff;
-    --pink: #ff00c8;
     --purple: #8b5cf6;
-    --glass: rgba(255,255,255,0.07);
+    --pink: #ff36c8;
+    --green: #72ffbd;
+    --danger: #ff6488;
+    --radius: 25px;
 }
 
 * {
@@ -24,685 +33,638 @@
 
 body {
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+    min-height: 100dvh;
+    font-family: Inter, sans-serif;
+    background: var(--bg);
+    color: var(--text);
     overflow-x: hidden;
-    font-family: 'Inter', sans-serif;
-    color: white;
-
-    background:
-        radial-gradient(circle at 15% 20%, #251060 0%, transparent 35%),
-        radial-gradient(circle at 85% 80%, #410b4d 0%, transparent 35%),
-        #050510;
+    transition: background .4s, color .4s;
 }
 
-/* Animated neon background */
-
-body::before,
-body::after {
-    content: "";
-    position: fixed;
-    width: 350px;
-    height: 350px;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.55;
-    z-index: -1;
-    animation: float 8s ease-in-out infinite alternate;
-}
-
-body::before {
-    background: var(--cyan);
-    top: -100px;
-    left: -100px;
-}
-
-body::after {
-    background: var(--pink);
-    bottom: -100px;
-    right: -100px;
-    animation-delay: -4s;
-}
-
-@keyframes float {
-    from { transform: translate(0, 0); }
-    to { transform: translate(100px, 80px); }
-}
-
-/* Main glass card */
-
-.calculator {
-    width: 100%;
-    max-width: 390px;
-    padding: 28px;
-    border-radius: 32px;
-
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-
-    border: 1px solid rgba(255,255,255,0.18);
-
-    box-shadow:
-        0 0 30px rgba(139,92,246,0.25),
-        0 0 80px rgba(0,245,255,0.08),
-        inset 0 0 25px rgba(255,255,255,0.03);
-
-    position: relative;
-    overflow: hidden;
-}
-
-/* Neon border */
-
-.calculator::before {
-    content: "";
-    position: absolute;
-    inset: -2px;
-    border-radius: inherit;
-    padding: 2px;
-
-    background: linear-gradient(
-        135deg,
-        var(--cyan),
-        var(--purple),
-        var(--pink),
-        var(--cyan)
-    );
-
-    background-size: 300% 300%;
-    animation: gradient 6s linear infinite;
-
-    -webkit-mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-
-    pointer-events: none;
-}
-
-@keyframes gradient {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 300% 50%; }
-}
-
-/* Header */
-
-.header {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.logo {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 30px;
-    font-weight: 800;
-
-    background: linear-gradient(
-        90deg,
-        var(--cyan),
-        var(--purple),
-        var(--pink)
-    );
-
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-
-    filter: drop-shadow(0 0 10px #8b5cf6);
-}
-
-.header h1 {
-    font-size: 19px;
-    letter-spacing: 3px;
-    margin-top: 5px;
-}
-
-.header p {
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: #aaa;
-    margin-top: 8px;
-}
-
-/* Display */
-
-.display {
-    padding: 20px;
-    margin-bottom: 20px;
-    min-height: 115px;
-    border-radius: 20px;
-
-    background: rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,255,255,0.1);
-
-    box-shadow:
-        inset 0 0 20px rgba(0,245,255,0.05),
-        0 0 15px rgba(139,92,246,0.08);
-
-    text-align: right;
-    overflow: hidden;
-}
-
-.previous {
-    min-height: 22px;
-    color: #aaa;
-    font-size: 14px;
-    word-break: break-all;
-}
-
-.current {
-    margin-top: 10px;
-    font-family: 'Orbitron', sans-serif;
-    font-size: clamp(24px, 7vw, 34px);
-    font-weight: 600;
-
-    background: linear-gradient(
-        90deg,
-        var(--cyan),
-        white,
-        var(--pink)
-    );
-
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-
-    word-break: break-all;
-}
-
-/* Buttons */
-
-.buttons {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+button, input {
+    font: inherit;
 }
 
 button {
-    height: 62px;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 18px;
-
-    color: white;
-    font-size: 20px;
-    font-weight: 600;
-
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(15px);
-
+    color: inherit;
+    border: none;
     cursor: pointer;
-    transition: 0.25s ease;
-
-    box-shadow:
-        inset 0 0 10px rgba(255,255,255,0.02),
-        0 5px 15px rgba(0,0,0,0.15);
+    -webkit-tap-highlight-color: transparent;
 }
 
-button:hover {
-    transform: translateY(-3px);
-    background: rgba(255,255,255,0.15);
-
-    box-shadow:
-        0 0 15px rgba(0,245,255,0.25),
-        0 0 25px rgba(139,92,246,0.2);
+button:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 3px;
 }
 
 button:active {
-    transform: scale(0.92);
+    transform: scale(.94);
 }
 
-/* Special buttons */
+/* BACKGROUND */
 
-.operator {
-    color: var(--cyan);
-    text-shadow: 0 0 10px var(--cyan);
+.background {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: -1;
 }
 
-.clear {
-    color: var(--pink);
-    text-shadow: 0 0 10px var(--pink);
+.orb {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    filter: blur(110px);
+    opacity: .35;
+    animation: float 13s ease-in-out infinite alternate;
 }
 
-.equal {
-    grid-column: span 2;
-
-    background: linear-gradient(
-        135deg,
-        #00d9ff,
-        #7650ff,
-        #ff00c8
-    );
-
-    border: none;
-    color: white;
-
-    box-shadow:
-        0 0 20px rgba(0,245,255,0.3),
-        0 0 30px rgba(255,0,200,0.2);
+.orb.one {
+    background: var(--purple);
+    top: -180px;
+    left: -100px;
 }
 
-.equal:hover {
-    box-shadow:
-        0 0 25px var(--cyan),
-        0 0 40px var(--pink);
+.orb.two {
+    background: var(--pink);
+    right: -180px;
+    bottom: -150px;
+    animation-delay: -5s;
 }
 
-.zero {
-    grid-column: span 2;
+.orb.three {
+    background: var(--cyan);
+    left: 40%;
+    bottom: 30%;
+    width: 250px;
+    height: 250px;
+    opacity: .12;
 }
 
-/* Footer */
-
-.footer {
-    text-align: center;
-    margin-top: 22px;
-    font-size: 11px;
-    color: #888;
-    letter-spacing: 1px;
+@keyframes float {
+    to { transform: translate(100px, 80px) scale(1.15); }
 }
 
-.footer span {
-    color: var(--pink);
-}
+/* APP LAYOUT */
 
-/* Mobile */
-
-@media (max-width: 400px) {
-    .calculator {
-        padding: 20px;
-    }
-
-    button {
-        height: 55px;
-        border-radius: 14px;
-    }
-
-    .buttons {
-        gap: 9px;
-    }
-}
-</style>
-</head>
-
-<body>
-
-<div class="calculator">
-
-    <div class="header">
-        <div class="logo">AB ✦</div>
-        <h1>CALCULATOR</h1>
-        <p>DREAM • CALCULATE • ACHIEVE</p>
-    </div>
-
-    <div class="display">
-        <div class="previous" id="previous"></div>
-        <div class="current" id="current">0</div>
-    </div>
-
-    <div class="buttons">
-
-        <button class="clear" onclick="clearAll()">AC</button>
-        <button onclick="deleteNumber()">DEL</button>
-        <button class="operator" onclick="percentage()">%</button>
-        <button class="operator" onclick="chooseOperator('/')">÷</button>
-
-        <button onclick="appendNumber('7')">7</button>
-        <button onclick="appendNumber('8')">8</button>
-        <button onclick="appendNumber('9')">9</button>
-        <button class="operator" onclick="chooseOperator('*')">×</button>
-
-        <button onclick="appendNumber('4')">4</button>
-        <button onclick="appendNumber('5')">5</button>
-        <button onclick="appendNumber('6')">6</button>
-        <button class="operator" onclick="chooseOperator('-')">−</button>
-
-        <button onclick="appendNumber('1')">1</button>
-        <button onclick="appendNumber('2')">2</button>
-        <button onclick="appendNumber('3')">3</button>
-        <button class="operator" onclick="chooseOperator('+')">+</button>
-
-        <button class="zero" onclick="appendNumber('0')">0</button>
-        <button onclick="appendNumber('.')">.</button>
-        <button class="equal" onclick="calculate()">=</button>
-
-    </div>
-
-    <div class="footer">
-        Made with <span>♥</span> by AB
-    </div>
-
-</div>
-
-<script>
-
-const currentDisplay = document.getElementById("current");
-const previousDisplay = document.getElementById("previous");
-
-let current = "0";
-let previous = "";
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AB Calculator | Neon Edition</title>
-
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Inter:wght@400;600;800&display=swap');
-
-:root {
-    --cyan: #00f5ff;
-    --pink: #ff00c8;
-    --purple: #8b5cf6;
-    --glass: rgba(255,255,255,0.07);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
+.app {
+    width: min(1200px, 100%);
     min-height: 100vh;
+    min-height: 100dvh;
+    margin: auto;
+    padding: 28px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+}
+
+.topbar {
+    display: flex;
     align-items: center;
-    padding: 20px;
-    overflow-x: hidden;
-    font-family: 'Inter', sans-serif;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.logo {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 15px;
+    font-family: Orbitron, sans-serif;
+    font-weight: 800;
+    font-size: 19px;
     color: white;
-
-    background:
-        radial-gradient(circle at 15% 20%, #251060 0%, transparent 35%),
-        radial-gradient(circle at 85% 80%, #410b4d 0%, transparent 35%),
-        #050510;
+    background: linear-gradient(135deg, var(--cyan), var(--purple), var(--pink));
+    box-shadow: 0 0 25px rgba(139,92,246,.4);
 }
 
-/* Animated neon background */
-
-body::before,
-body::after {
-    content: "";
-    position: fixed;
-    width: 350px;
-    height: 350px;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.55;
-    z-index: -1;
-    animation: float 8s ease-in-out infinite alternate;
+.brand h1 {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 1px;
 }
 
-body::before {
-    background: var(--cyan);
-    top: -100px;
-    left: -100px;
+.brand p {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-top: 5px;
 }
 
-body::after {
-    background: var(--pink);
-    bottom: -100px;
-    right: -100px;
-    animation-delay: -4s;
+.top-actions {
+    display: flex;
+    gap: 10px;
 }
 
-@keyframes float {
-    from { transform: translate(0, 0); }
-    to { transform: translate(100px, 80px); }
+.icon-btn {
+    min-width: 42px;
+    height: 42px;
+    padding: 0 13px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    color: var(--muted);
+    transition: .25s;
 }
 
-/* Main glass card */
+.icon-btn:hover {
+    color: var(--cyan);
+    border-color: var(--cyan);
+}
+
+/* MAIN CONTENT */
+
+.workspace {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 22px;
+    align-items: stretch;
+}
+
+.glass {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.2),
+        inset 0 1px 0 rgba(255,255,255,.07);
+    border-radius: var(--radius);
+}
+
+/* CALCULATOR */
 
 .calculator {
-    width: 100%;
-    max-width: 390px;
-    padding: 28px;
-    border-radius: 32px;
-
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-
-    border: 1px solid rgba(255,255,255,0.18);
-
-    box-shadow:
-        0 0 30px rgba(139,92,246,0.25),
-        0 0 80px rgba(0,245,255,0.08),
-        inset 0 0 25px rgba(255,255,255,0.03);
-
+    padding: 25px;
     position: relative;
     overflow: hidden;
 }
 
-/* Neon border */
-
 .calculator::before {
     content: "";
     position: absolute;
-    inset: -2px;
-    border-radius: inherit;
-    padding: 2px;
-
-    background: linear-gradient(
-        135deg,
-        var(--cyan),
-        var(--purple),
-        var(--pink),
-        var(--cyan)
-    );
-
-    background-size: 300% 300%;
-    animation: gradient 6s linear infinite;
-
-    -webkit-mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-
+    top: -180px;
+    right: -180px;
+    width: 350px;
+    height: 350px;
+    background: var(--purple);
+    opacity: .10;
+    filter: blur(100px);
     pointer-events: none;
 }
 
-@keyframes gradient {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 300% 50%; }
+.calc-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 12px;
 }
 
-/* Header */
-
-.header {
-    text-align: center;
-    margin-bottom: 25px;
+.mode-label {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    font-weight: 700;
 }
 
-.logo {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 30px;
-    font-weight: 800;
-
-    background: linear-gradient(
-        90deg,
-        var(--cyan),
-        var(--purple),
-        var(--pink)
-    );
-
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-
-    filter: drop-shadow(0 0 10px #8b5cf6);
+.mode-switch {
+    display: flex;
+    padding: 4px;
+    background: rgba(0,0,0,.18);
+    border: 1px solid var(--border);
+    border-radius: 12px;
 }
 
-.header h1 {
-    font-size: 19px;
-    letter-spacing: 3px;
-    margin-top: 5px;
+.mode-switch button {
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-size: 11px;
+    color: var(--muted);
+    background: transparent;
 }
 
-.header p {
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: #aaa;
-    margin-top: 8px;
+.mode-switch button.active {
+    background: linear-gradient(135deg, var(--purple), #5142bb);
+    color: white;
+    box-shadow: 0 0 15px rgba(139,92,246,.3);
 }
 
-/* Display */
+/* DISPLAY */
 
 .display {
+    min-height: 155px;
     padding: 20px;
-    margin-bottom: 20px;
-    min-height: 115px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,.20);
     border-radius: 20px;
-
-    background: rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,255,255,0.1);
-
-    box-shadow:
-        inset 0 0 20px rgba(0,245,255,0.05),
-        0 0 15px rgba(139,92,246,0.08);
-
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     text-align: right;
     overflow: hidden;
 }
 
-.previous {
-    min-height: 22px;
-    color: #aaa;
+.expression {
+    color: var(--muted);
     font-size: 14px;
-    word-break: break-all;
+    min-height: 25px;
+    overflow-wrap: anywhere;
 }
 
-.current {
-    margin-top: 10px;
-    font-family: 'Orbitron', sans-serif;
-    font-size: clamp(24px, 7vw, 34px);
+.result {
+    font-family: Orbitron, sans-serif;
+    font-size: clamp(28px, 4vw, 43px);
     font-weight: 600;
-
-    background: linear-gradient(
-        90deg,
-        var(--cyan),
-        white,
-        var(--pink)
-    );
-
+    letter-spacing: -1px;
+    margin-top: 12px;
+    overflow-wrap: anywhere;
+    background: linear-gradient(90deg, var(--cyan), white, var(--pink));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-
-    word-break: break-all;
 }
 
-/* Buttons */
-
-.buttons {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+.display-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    gap: 10px;
 }
 
-button {
-    height: 62px;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 18px;
-
-    color: white;
-    font-size: 20px;
-    font-weight: 600;
-
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(15px);
-
-    cursor: pointer;
-    transition: 0.25s ease;
-
-    box-shadow:
-        inset 0 0 10px rgba(255,255,255,0.02),
-        0 5px 15px rgba(0,0,0,0.15);
-}
-
-button:hover {
-    transform: translateY(-3px);
-    background: rgba(255,255,255,0.15);
-
-    box-shadow:
-        0 0 15px rgba(0,245,255,0.25),
-        0 0 25px rgba(139,92,246,0.2);
-}
-
-button:active {
-    transform: scale(0.92);
-}
-
-/* Special buttons */
-
-.operator {
+.angle-btn {
+    background: transparent;
     color: var(--cyan);
-    text-shadow: 0 0 10px var(--cyan);
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 6px 9px;
+    border: 1px solid rgba(0,245,255,.2);
+    border-radius: 8px;
 }
 
-.clear {
-    color: var(--pink);
-    text-shadow: 0 0 10px var(--pink);
-}
-
-.equal {
-    grid-column: span 2;
-
-    background: linear-gradient(
-        135deg,
-        #00d9ff,
-        #7650ff,
-        #ff00c8
-    );
-
-    border: none;
-    color: white;
-
-    box-shadow:
-        0 0 20px rgba(0,245,255,0.3),
-        0 0 30px rgba(255,0,200,0.2);
-}
-
-.equal:hover {
-    box-shadow:
-        0 0 25px var(--cyan),
-        0 0 40px var(--pink);
-}
-
-.zero {
-    grid-column: span 2;
-}
-
-/* Footer */
-
-.footer {
-    text-align: center;
-    margin-top: 22px;
+.copy-btn {
+    background: transparent;
+    color: var(--muted);
     font-size: 11px;
-    color: #888;
+    padding: 6px;
+}
+
+/* KEYPAD */
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 11px;
+}
+
+.key {
+    min-width: 0;
+    height: 62px;
+    border-radius: 17px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    font-size: 18px;
+    font-weight: 600;
+    transition: background .2s, box-shadow .2s, transform .15s;
+    position: relative;
+    overflow: hidden;
+}
+
+.key:hover {
+    background: rgba(255,255,255,.13);
+    box-shadow: 0 0 20px rgba(0,245,255,.1);
+    border-color: rgba(0,245,255,.3);
+}
+
+.key.function {
+    color: var(--cyan);
+    background: rgba(0,245,255,.055);
+}
+
+.key.operator {
+    color: var(--pink);
+    background: rgba(255,54,200,.055);
+    font-size: 22px;
+}
+
+.key.clear {
+    color: var(--danger);
+}
+
+.key.equal {
+    background: linear-gradient(135deg, var(--cyan), var(--purple), var(--pink));
+    color: white;
+    border: none;
+    box-shadow: 0 0 25px rgba(139,92,246,.3);
+}
+
+.key.equal:hover {
+    box-shadow: 0 0 35px rgba(0,245,255,.4);
+}
+
+.key.zero {
+    grid-column: span 2;
+}
+
+/* SCIENTIFIC MODE */
+
+.scientific {
+    display: none;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 9px;
+    margin-bottom: 12px;
+}
+
+.scientific.visible {
+    display: grid;
+}
+
+.scientific .key {
+    height: 45px;
+    font-size: 12px;
+    border-radius: 12px;
+}
+
+/* HISTORY PANEL */
+
+.history-panel {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.history-header h2 {
+    font-size: 14px;
     letter-spacing: 1px;
 }
 
-.footer span {
-    color: var(--pink);
+.history-header button {
+    background: transparent;
+    color: var(--muted);
+    font-size: 11px;
 }
 
-/* Mobile */
+.history-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 430px;
+}
 
-@media (max-width: 400px) {
+.history-item {
+    padding: 13px 12px;
+    border-radius: 13px;
+    margin-bottom: 9px;
+    background: rgba(255,255,255,.035);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.history-item:hover {
+    background: rgba(255,255,255,.08);
+    border-color: var(--border);
+}
+
+.history-expression {
+    font-size: 11px;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+}
+
+.history-result {
+    font-family: Orbitron, sans-serif;
+    font-size: 16px;
+    margin-top: 7px;
+    color: var(--cyan);
+    overflow-wrap: anywhere;
+}
+
+.empty-history {
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+    padding: 40px 10px;
+    line-height: 1.8;
+}
+
+.history-footer {
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    margin-top: 15px;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.8;
+}
+
+/* FOOTER */
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 22px;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+}
+
+/* THEMES */
+
+body.ocean {
+    --cyan: #00d9ff;
+    --purple: #2563eb;
+    --pink: #00ffbd;
+}
+
+body.sunset {
+    --cyan: #ffb347;
+    --purple: #ff416c;
+    --pink: #ff00a8;
+}
+
+body.light {
+    --bg: #e9edff;
+    --panel: rgba(255,255,255,.65);
+    --glass: rgba(255,255,255,.55);
+    --border: rgba(70,70,130,.15);
+    --text: #17172d;
+    --muted: #696987;
+}
+
+body.light .display {
+    background: rgba(255,255,255,.55);
+}
+
+body.light .key {
+    box-shadow: 0 3px 12px rgba(50,50,100,.06);
+}
+
+body.light .orb {
+    opacity: .22;
+}
+
+/* RESPONSIVE TABLET */
+
+@media (max-width: 900px) {
+    .app {
+        padding: 22px;
+    }
+
+    .workspace {
+        grid-template-columns: minmax(0, 1fr) 240px;
+        gap: 15px;
+    }
+
     .calculator {
         padding: 20px;
     }
 
-    button {
-        height: 55px;
-        border-radius: 14px;
+    .keypad {
+        gap: 8px;
     }
 
-    .buttons {
-        gap: 9px;
+    .key {
+        height: 57px;
+    }
+
+    .history-panel {
+        padding: 17px;
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 680px) {
+    .app {
+        padding: 15px;
+    }
+
+    .topbar {
+        margin-bottom: 18px;
+    }
+
+    .workspace {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 15px;
+    }
+
+    .calculator {
+        padding: 17px;
+    }
+
+    .history-panel {
+        min-height: auto;
+    }
+
+    .history-list {
+        max-height: 230px;
+    }
+
+    .display {
+        min-height: 130px;
+        padding: 16px;
+    }
+
+    .keypad {
+        gap: 8px;
+    }
+
+    .key {
+        height: clamp(48px, 13vw, 61px);
+        border-radius: 14px;
+        font-size: 17px;
+    }
+
+    .scientific .key {
+        height: 43px;
+    }
+
+    .footer {
+        margin-top: 17px;
+    }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 380px) {
+    .app {
+        padding: 10px;
+    }
+
+    .calculator {
+        padding: 12px;
+    }
+
+    .keypad {
+        gap: 6px;
+    }
+
+    .key {
+        height: 48px;
+        font-size: 15px;
+        border-radius: 12px;
+    }
+
+    .scientific {
+        gap: 6px;
+    }
+
+    .scientific .key {
+        height: 38px;
+        font-size: 10px;
+    }
+
+    .brand p {
+        letter-spacing: 1px;
+    }
+
+    .icon-btn {
+        min-width: 35px;
+        height: 35px;
+        padding: 0 9px;
+    }
+}
+
+/* REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
     }
 }
 </style>
@@ -710,166 +672,770 @@ button:active {
 
 <body>
 
-<div class="calculator">
+<div class="background">
+    <div class="orb one"></div>
+    <div class="orb two"></div>
+    <div class="orb three"></div>
+</div>
 
-    <div class="header">
-        <div class="logo">AB ✦</div>
-        <h1>CALCULATOR</h1>
-        <p>DREAM • CALCULATE • ACHIEVE</p>
-    </div>
+<div class="app">
 
-    <div class="display">
-        <div class="previous" id="previous"></div>
-        <div class="current" id="current">0</div>
-    </div>
+    <!-- HEADER -->
 
-    <div class="buttons">
+    <header class="topbar">
+        <div class="brand">
+            <div class="logo">AB</div>
+            <div>
+                <h1>AB CALCULATOR</h1>
+                <p>ULTIMATE EDITION</p>
+            </div>
+        </div>
 
-        <button class="clear" onclick="clearAll()">AC</button>
-        <button onclick="deleteNumber()">DEL</button>
-        <button class="operator" onclick="percentage()">%</button>
-        <button class="operator" onclick="chooseOperator('/')">÷</button>
+        <div class="top-actions">
+            <button class="icon-btn" id="themeBtn" title="Change theme">◈</button>
+            <button class="icon-btn" id="lightBtn" title="Light / dark">☼</button>
+        </div>
+    </header>
 
-        <button onclick="appendNumber('7')">7</button>
-        <button onclick="appendNumber('8')">8</button>
-        <button onclick="appendNumber('9')">9</button>
-        <button class="operator" onclick="chooseOperator('*')">×</button>
+    <!-- WORKSPACE -->
 
-        <button onclick="appendNumber('4')">4</button>
-        <button onclick="appendNumber('5')">5</button>
-        <button onclick="appendNumber('6')">6</button>
-        <button class="operator" onclick="chooseOperator('-')">−</button>
+    <main class="workspace">
 
-        <button onclick="appendNumber('1')">1</button>
-        <button onclick="appendNumber('2')">2</button>
-        <button onclick="appendNumber('3')">3</button>
-        <button class="operator" onclick="chooseOperator('+')">+</button>
+        <!-- CALCULATOR -->
 
-        <button class="zero" onclick="appendNumber('0')">0</button>
-        <button onclick="appendNumber('.')">.</button>
-        <button class="equal" onclick="calculate()">=</button>
+        <section class="calculator glass">
 
-    </div>
+            <div class="calc-toolbar">
+                <span class="mode-label">SCIENTIFIC ENGINE</span>
 
-    <div class="footer">
-        Made with <span>♥</span> by AB
-    </div>
+                <div class="mode-switch">
+                    <button id="basicBtn" class="active">Basic</button>
+                    <button id="scientificBtn">Scientific</button>
+                </div>
+            </div>
+
+            <!-- DISPLAY -->
+
+            <div class="display">
+                <div class="expression" id="expression"></div>
+                <div class="result" id="result">0</div>
+
+                <div class="display-footer">
+                    <button class="angle-btn" id="angleBtn">DEG</button>
+                    <button class="copy-btn" id="copyBtn">▣ Copy result</button>
+                </div>
+            </div>
+
+            <!-- SCIENTIFIC KEYS -->
+
+            <div class="scientific" id="scientificKeys">
+
+                <button class="key function" data-fn="sin">sin</button>
+                <button class="key function" data-fn="cos">cos</button>
+                <button class="key function" data-fn="tan">tan</button>
+                <button class="key function" data-fn="log">log</button>
+
+                <button class="key function" data-fn="sqrt">√</button>
+                <button class="key function" data-fn="square">x²</button>
+                <button class="key function" data-fn="reciprocal">1/x</button>
+                <button class="key function" data-fn="abs">|x|</button>
+
+                <button class="key function" data-fn="ln">ln</button>
+                <button class="key function" data-fn="exp">eˣ</button>
+                <button class="key function" data-fn="pi">π</button>
+                <button class="key function" data-fn="e">e</button>
+
+                <button class="key function" data-fn="factorial">n!</button>
+                <button class="key function" data-fn="power">xʸ</button>
+                <button class="key function" data-fn="openParen">(</button>
+                <button class="key function" data-fn="closeParen">)</button>
+
+            </div>
+
+            <!-- BASIC KEYS -->
+
+            <div class="keypad">
+
+                <button class="key clear" data-action="clear">AC</button>
+                <button class="key function" data-action="delete">DEL</button>
+                <button class="key function" data-action="percent">%</button>
+                <button class="key operator" data-op="/">÷</button>
+
+                <button class="key" data-num="7">7</button>
+                <button class="key" data-num="8">8</button>
+                <button class="key" data-num="9">9</button>
+                <button class="key operator" data-op="*">×</button>
+
+                <button class="key" data-num="4">4</button>
+                <button class="key" data-num="5">5</button>
+                <button class="key" data-num="6">6</button>
+                <button class="key operator" data-op="-">−</button>
+
+                <button class="key" data-num="1">1</button>
+                <button class="key" data-num="2">2</button>
+                <button class="key" data-num="3">3</button>
+                <button class="key operator" data-op="+">+</button>
+
+                <button class="key zero" data-num="0">0</button>
+                <button class="key" data-num=".">.</button>
+                <button class="key equal" data-action="equals">=</button>
+
+            </div>
+
+        </section>
+
+        <!-- HISTORY -->
+
+        <aside class="history-panel glass">
+
+            <div class="history-header">
+                <h2>◷ HISTORY</h2>
+                <button id="clearHistory">Clear all</button>
+            </div>
+
+            <div class="history-list" id="historyList">
+                <div class="empty-history">
+                    Your calculations<br>
+                    will appear here ✨
+                </div>
+            </div>
+
+            <div class="history-footer">
+                AB ENGINE v2.0<br>
+                Precision calculation system
+            </div>
+
+        </aside>
+
+    </main>
+
+    <footer class="footer">
+        <span class="status">
+            <span class="status-dot"></span>
+            SYSTEM ONLINE
+        </span>
+
+        <span>MADE WITH ♥ BY AB</span>
+    </footer>
 
 </div>
 
 <script>
 
-const currentDisplay = document.getElementById("current");
-const previousDisplay = document.getElementById("previous");
+/* =========================================
+   AB CALCULATOR ENGINE
+========================================= */
 
-let current = "0";
-let previous = "";
-let operator = null;
-let resetScreen = false;
+const $ = id => document.getElementById(id);
+
+const resultDisplay = $("result");
+const expressionDisplay = $("expression");
+
+let input = "0";
+let expression = "";
+let justCalculated = false;
+let angleMode = "DEG";
+let scientificMode = false;
+let history = [];
+let themeIndex = 0;
+
+const themes = ["neon", "ocean", "sunset"];
 
 function updateDisplay() {
-    currentDisplay.innerText = current;
-    previousDisplay.innerText = previous;
+    resultDisplay.textContent = input;
+    expressionDisplay.textContent = expression;
 }
+
+function formatNumber(number) {
+
+    if (!Number.isFinite(number)) {
+        throw new Error("Math error");
+    }
+
+    if (Math.abs(number) < 1e-12) number = 0;
+
+    return Number(number.toPrecision(12)).toString();
+}
+
+/* =========================================
+   BASIC INPUT
+========================================= */
 
 function appendNumber(number) {
 
-    if (number === "." && current.includes(".")) return;
+    if (justCalculated) {
+        input = "0";
+        expression = "";
+        justCalculated = false;
+    }
 
-    if (current === "0" && number !== ".") {
-        current = number;
+    if (input.length > 25) return;
+
+    if (number === "." && input.includes(".")) return;
+
+    if (input === "0" && number !== ".") {
+        input = number;
     } else {
-        current += number;
+        input += number;
     }
 
     updateDisplay();
 }
 
-function chooseOperator(op) {
+function clearAll() {
+    input = "0";
+    expression = "";
+    justCalculated = false;
+    updateDisplay();
+}
 
-    if (current === "") return;
+function deleteNumber() {
 
-    if (previous !== "") {
-        calculate();
+    if (justCalculated) {
+        clearAll();
+        return;
     }
 
-    operator = op;
-    previous = current + " " + op;
-    current = "";
+    input = input.slice(0, -1);
+
+    if (input === "" || input === "-") {
+        input = "0";
+    }
+
+    updateDisplay();
+}
+
+/* =========================================
+   SAFE EXPRESSION PARSER
+   No eval() used
+========================================= */
+
+function tokenize(source) {
+
+    source = source
+        .replace(/×/g, "*")
+        .replace(/÷/g, "/")
+        .replace(/−/g, "-")
+        .replace(/\s/g, "");
+
+    const tokens = [];
+    let i = 0;
+
+    while (i < source.length) {
+
+        const char = source[i];
+
+        if (/[0-9.]/.test(char)) {
+
+            let number = "";
+
+            while (i < source.length && /[0-9.]/.test(source[i])) {
+                number += source[i++];
+            }
+
+            if (!/^\d*\.?\d+$/.test(number)) {
+                throw new Error("Invalid number");
+            }
+
+            tokens.push({
+                type: "number",
+                value: Number(number)
+            });
+
+            continue;
+        }
+
+        if (/[+\-*/^()%]/.test(char)) {
+            tokens.push({
+                type: "operator",
+                value: char
+            });
+            i++;
+            continue;
+        }
+
+        throw new Error("Invalid expression");
+    }
+
+    return tokens;
+}
+
+function parseExpression(tokens) {
+
+    let position = 0;
+
+    function peek() {
+        return tokens[position];
+    }
+
+    function consume(value) {
+        if (peek()?.value === value) {
+            position++;
+            return true;
+        }
+        return false;
+    }
+
+    function primary() {
+
+        if (consume("(")) {
+            const value = addSub();
+            if (!consume(")")) throw new Error("Missing )");
+            return value;
+        }
+
+        if (consume("-")) return -primary();
+        if (consume("+")) return primary();
+
+        const token = peek();
+
+        if (!token || token.type !== "number") {
+            throw new Error("Invalid expression");
+        }
+
+        position++;
+        return token.value;
+    }
+
+    function power() {
+
+        let left = primary();
+
+        if (consume("^")) {
+            left = Math.pow(left, power());
+        }
+
+        return left;
+    }
+
+    function multiplyDivide() {
+
+        let left = power();
+
+        while (peek() && ["*", "/"].includes(peek().value)) {
+
+            const op = tokens[position++].value;
+            const right = power();
+
+            if (op === "/" && right === 0) {
+                throw new Error("Cannot divide by zero");
+            }
+
+            left = op === "*" ? left * right : left / right;
+        }
+
+        return left;
+    }
+
+    function addSub() {
+
+        let left = multiplyDivide();
+
+        while (peek() && ["+", "-"].includes(peek().value)) {
+
+            const op = tokens[position++].value;
+            const right = multiplyDivide();
+
+            left = op === "+" ? left + right : left - right;
+        }
+
+        return left;
+    }
+
+    const result = addSub();
+
+    if (position !== tokens.length) {
+        throw new Error("Invalid expression");
+    }
+
+    return result;
+}
+
+function evaluate(source) {
+    return parseExpression(tokenize(source));
+}
+
+/* =========================================
+   OPERATORS
+========================================= */
+
+function chooseOperator(op) {
+
+    if (input === "Error") return;
+
+    if (justCalculated) {
+        justCalculated = false;
+    }
+
+    expression = input + " " + op;
+    input = "0";
 
     updateDisplay();
 }
 
 function calculate() {
 
-    if (operator === null || current === "") return;
+    if (!expression) return;
 
-    let a = parseFloat(previous);
-    let b = parseFloat(current);
-    let result;
+    const source = expression + " " + input;
 
-    switch (operator) {
-        case "+":
-            result = a + b;
-            break;
+    try {
 
-        case "-":
-            result = a - b;
-            break;
+        const result = evaluate(source);
 
-        case "*":
-            result = a * b;
-            break;
+        input = formatNumber(result);
 
-        case "/":
-            if (b === 0) {
-                current = "Cannot divide by zero";
-                previous = "";
-                operator = null;
+        addHistory(source, input);
+
+        expression = "";
+        justCalculated = true;
+
+    } catch (error) {
+        input = "Error";
+        expression = error.message;
+    }
+
+    updateDisplay();
+}
+
+/* =========================================
+   SCIENTIFIC FUNCTIONS
+========================================= */
+
+function factorial(number) {
+
+    if (number < 0 || !Number.isInteger(number) || number > 170) {
+        throw new Error("Invalid factorial");
+    }
+
+    let result = 1;
+
+    for (let i = 2; i <= number; i++) {
+        result *= i;
+    }
+
+    return result;
+}
+
+function applyFunction(fn) {
+
+    if (input === "Error") return;
+
+    const number = Number(input);
+
+    try {
+
+        let result;
+
+        switch (fn) {
+
+            case "sin":
+                result = Math.sin(
+                    angleMode === "DEG" ? number * Math.PI / 180 : number
+                );
+                break;
+
+            case "cos":
+                result = Math.cos(
+                    angleMode === "DEG" ? number * Math.PI / 180 : number
+                );
+                break;
+
+            case "tan":
+                result = Math.tan(
+                    angleMode === "DEG" ? number * Math.PI / 180 : number
+                );
+                break;
+
+            case "sqrt":
+                if (number < 0) throw new Error("Invalid square root");
+                result = Math.sqrt(number);
+                break;
+
+            case "square":
+                result = number * number;
+                break;
+
+            case "reciprocal":
+                if (number === 0) throw new Error("Cannot divide by zero");
+                result = 1 / number;
+                break;
+
+            case "abs":
+                result = Math.abs(number);
+                break;
+
+            case "log":
+                if (number <= 0) throw new Error("Invalid logarithm");
+                result = Math.log10(number);
+                break;
+
+            case "ln":
+                if (number <= 0) throw new Error("Invalid logarithm");
+                result = Math.log(number);
+                break;
+
+            case "exp":
+                result = Math.exp(number);
+                break;
+
+            case "factorial":
+                result = factorial(number);
+                break;
+
+            case "pi":
+                result = Math.PI;
+                break;
+
+            case "e":
+                result = Math.E;
+                break;
+
+            case "power":
+                chooseOperator("^");
+                return;
+
+            case "openParen":
+                input = input === "0" ? "(" : input + "(";
                 updateDisplay();
                 return;
-            }
-            result = a / b;
-            break;
-    }
 
-    current = String(
-        parseFloat(result.toPrecision(12))
-    );
+            case "closeParen":
+                input += ")";
+                updateDisplay();
+                return;
+        }
 
-    previous = "";
-    operator = null;
+        const formatted = formatNumber(result);
 
-    updateDisplay();
-}
+        addHistory(fn + "(" + input + ")", formatted);
 
-function clearAll() {
-    current = "0";
-    previous = "";
-    operator = null;
-    updateDisplay();
-}
+        expression = fn + "(" + input + ")";
+        input = formatted;
 
-function deleteNumber() {
-    current = current.slice(0, -1);
+        justCalculated = true;
 
-    if (current === "") {
-        current = "0";
+    } catch (error) {
+        input = "Error";
+        expression = error.message;
     }
 
     updateDisplay();
 }
+
+/* =========================================
+   PERCENTAGE
+========================================= */
 
 function percentage() {
-    current = String(parseFloat(current) / 100);
-    updateDisplay();
+
+    if (input === "Error") return;
+
+    try {
+        input = formatNumber(Number(input) / 100);
+        updateDisplay();
+    } catch {
+        input = "Error";
+        updateDisplay();
+    }
 }
 
-/* Keyboard support */
+/* =========================================
+   HISTORY
+========================================= */
 
-document.addEventListener("keydown", function(event) {
+function addHistory(expr, result) {
 
-    if (event.key >= "0" && event.key <= "9") {
+    history.unshift({
+        expr,
+        result,
+        time: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit"
+        })
+    });
+
+    history = history.slice(0, 30);
+
+    renderHistory();
+}
+
+function renderHistory() {
+
+    const container = $("historyList");
+
+    if (history.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty-history">
+                Your calculations<br>
+                will appear here ✨
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML = "";
+
+    history.forEach((item, index) => {
+
+        const div = document.createElement("div");
+        div.className = "history-item";
+
+        const expr = document.createElement("div");
+        expr.className = "history-expression";
+        expr.textContent = item.expr;
+
+        const result = document.createElement("div");
+        result.className = "history-result";
+        result.textContent = "= " + item.result;
+
+        div.append(expr, result);
+
+        div.addEventListener("click", () => {
+
+            input = item.result;
+            expression = "";
+            justCalculated = true;
+
+            updateDisplay();
+        });
+
+        container.appendChild(div);
+    });
+}
+
+$("clearHistory").addEventListener("click", () => {
+    history = [];
+    renderHistory();
+});
+
+/* =========================================
+   SCIENTIFIC MODE
+========================================= */
+
+$("basicBtn").addEventListener("click", () => {
+
+    scientificMode = false;
+
+    $("basicBtn").classList.add("active");
+    $("scientificBtn").classList.remove("active");
+
+    $("scientificKeys").classList.remove("visible");
+});
+
+$("scientificBtn").addEventListener("click", () => {
+
+    scientificMode = true;
+
+    $("scientificBtn").classList.add("active");
+    $("basicBtn").classList.remove("active");
+
+    $("scientificKeys").classList.add("visible");
+});
+
+/* =========================================
+   ANGLE MODE
+========================================= */
+
+$("angleBtn").addEventListener("click", () => {
+
+    angleMode = angleMode === "DEG" ? "RAD" : "DEG";
+
+    $("angleBtn").textContent = angleMode;
+});
+
+/* =========================================
+   THEMES
+========================================= */
+
+$("themeBtn").addEventListener("click", () => {
+
+    themeIndex = (themeIndex + 1) % themes.length;
+
+    document.body.classList.remove("ocean", "sunset");
+
+    if (themes[themeIndex] !== "neon") {
+        document.body.classList.add(themes[themeIndex]);
+    }
+});
+
+$("lightBtn").addEventListener("click", () => {
+
+    document.body.classList.toggle("light");
+
+    $("lightBtn").textContent =
+        document.body.classList.contains("light") ? "☾" : "☼";
+});
+
+/* =========================================
+   COPY RESULT
+========================================= */
+
+$("copyBtn").addEventListener("click", async () => {
+
+    try {
+
+        await navigator.clipboard.writeText(input);
+
+        $("copyBtn").textContent = "✓ Copied!";
+
+        setTimeout(() => {
+            $("copyBtn").textContent = "▣ Copy result";
+        }, 1500);
+
+    } catch {
+        $("copyBtn").textContent = "Copy unavailable";
+    }
+});
+
+/* =========================================
+   BUTTON EVENTS
+========================================= */
+
+document.querySelectorAll("[data-num]").forEach(button => {
+
+    button.addEventListener("click", () => {
+        appendNumber(button.dataset.num);
+    });
+});
+
+document.querySelectorAll("[data-op]").forEach(button => {
+
+    button.addEventListener("click", () => {
+        chooseOperator(button.dataset.op);
+    });
+});
+
+document.querySelectorAll("[data-action]").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        const action = button.dataset.action;
+
+        if (action === "clear") clearAll();
+        if (action === "delete") deleteNumber();
+        if (action === "percent") percentage();
+        if (action === "equals") calculate();
+
+    });
+});
+
+document.querySelectorAll("[data-fn]").forEach(button => {
+
+    button.addEventListener("click", () => {
+        applyFunction(button.dataset.fn);
+    });
+});
+
+/* =========================================
+   KEYBOARD SUPPORT
+========================================= */
+
+document.addEventListener("keydown", event => {
+
+    if (/^[0-9]$/.test(event.key)) {
         appendNumber(event.key);
     }
 
@@ -877,11 +1443,12 @@ document.addEventListener("keydown", function(event) {
         appendNumber(".");
     }
 
-    if (["+", "-", "*", "/"].includes(event.key)) {
+    if (["+", "-", "*", "/", "^"].includes(event.key)) {
         chooseOperator(event.key);
     }
 
     if (event.key === "Enter" || event.key === "=") {
+        event.preventDefault();
         calculate();
     }
 
@@ -893,99 +1460,19 @@ document.addEventListener("keydown", function(event) {
         clearAll();
     }
 
+    if (event.key === "%") {
+        percentage();
+    }
 });
+
+/* =========================================
+   INITIALIZE
+========================================= */
+
+updateDisplay();
+renderHistory();
 
 </script>
 
 </body>
 </html>
-￼Enterlet operator = null;
-let resetScreen = false;
-
-function updateDisplay() {
-    currentDisplay.innerText = current;
-    previousDisplay.innerText = previous;
-}
-
-function appendNumber(number) {
-
-    if (number === "." && current.includes(".")) return;
-
-    if (current === "0" && number !== ".") {
-        current = number;
-    } else {
-        current += number;
-    }
-
-    updateDisplay();
-}
-
-function chooseOperator(op) {
-
-    if (current === "") return;
-
-    if (previous !== "") {
-        calculate();
-    }
-
-    operator = op;
-    previous = current + " " + op;
-    current = "";
-
-    updateDisplay();
-}
-
-function calculate() {
-
-    if (operator === null || current === "") return;
-
-    let a = parseFloat(previous);
-    let b = parseFloat(current);
-    let result;
-
-    switch (operator) {
-  case "+":
-            result = a + b;
-            break;
-
-        case "-":
-            result = a - b;
-            break;
-
-        case "*":
-            result = a * b;
-            break;
-
-        case "/":
-            if (b === 0) {
-                current = "Cannot divide by zero";
-                previous = "";
-                operator = null;
-                updateDisplay();
-                return;
-            }
-            result = a / b;
-            break;
-    }
-
-    current = String(
-        parseFloat(result.toPrecision(12))
-    );
-
-    previous = "";
-    operator = null;
-
-    updateDisplay();
-}
-
-function clearAll() {
-    current = "0";
-    previous = "";
-    operator = null;
-    updateDisplay();
-}
-
-function deleteNumber() {
-    current = current.slice(0, -1);
-
-    if (current === "") {
